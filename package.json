@@ -1,0 +1,19 @@
+{
+  "name": "chored",
+  "version": "1.0.0",
+  "description": "Chored is meant to remind people in a household when it is their turn to do their chores!",
+  "main": "index.js",
+  "scripts": {
+    "start": "node backend/src/server",
+    "dev": "node --watch backend/src/server"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "mongoose": "^8.7.2"
+  }
+}
