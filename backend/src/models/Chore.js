@@ -29,6 +29,6 @@ const choreSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const Household = mongoose.model('Household', householdSchema);
+const Chore = mongoose.model('chore', choreSchema);
 
-export default Household;
+export default Chore;

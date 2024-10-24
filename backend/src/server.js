@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 
 import householdRoutes from "./routes/household.route.js";
+import userRoutes from "./routes/user.route.js";
+import choreRoutes from "./routes/chore.route.js";
 
 dotenv.config();
 
@@ -15,6 +17,8 @@ app.get('/', (req, res) => {
 });
 
 app.use("/api/household", householdRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/chore", choreRoutes);
 
 app.listen(3000, () => {
     connectDB();
