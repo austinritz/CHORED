@@ -6,12 +6,14 @@ const ObjectId = mongoose.Types.ObjectId;
 export const getUser = async (req, res) => {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!ObjectId.isValid(id)) {
         return res.status(404).json({ success: false, message: "Invalid User Id"});
     }
 
     try {
-        const retrievedUser = await User.findById(id);
+        const retrievedUser = await User.findById(id)
+            .populate('households')
+            .populate('chores');
         if (retrievedUser === null) {
             return res.status(404).json({ success: false, message: "User does not exist"});
         } 
@@ -44,7 +46,7 @@ export const updateUser = async (req, res) => {
 
     const user = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!ObjectId.isValid(id)) {
         return res.status(404).json({ success: false, message: "Invalid User Id"});
     }
 
@@ -59,7 +61,7 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!ObjectId.isValid(id)) {
         return res.status(404).json({ success: false, message: "Invalid User Id"});
     }
 

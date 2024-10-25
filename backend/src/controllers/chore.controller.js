@@ -6,15 +6,17 @@ const ObjectId = mongoose.Types.ObjectId;
 export const getChore = async (req, res) => {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!ObjectId.isValid(id)) {
         return res.status(404).json({ success: false, message: "Invalid Chore Id"});
     }
 
     try {
-        const retrievedChore = await Chore.findById(id);
+        const retrievedChore = await Chore.findById(id)
+            .populate('users')
+            .populate('household');
         if (retrievedChore === null) {
             return res.status(404).json({ success: false, message: "Chore does not exist"});
-        } 
+        }
         res.status(200).json({ success: true, data: retrievedChore });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server Error"});
@@ -44,7 +46,7 @@ export const updateChore = async (req, res) => {
 
     const chore = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!ObjectId.isValid(id)) {
         return res.status(404).json({ success: false, message: "Invalid Chore Id"});
     }
 
@@ -59,7 +61,7 @@ export const updateChore = async (req, res) => {
 export const deleteChore = async (req, res) => {
     const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!ObjectId.isValid(id)) {
         return res.status(404).json({ success: false, message: "Invalid Chore Id"});
     }
 
