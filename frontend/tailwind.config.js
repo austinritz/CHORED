@@ -6,7 +6,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        nanumGothic: ["Nanum Gothic", "sans-serif"]
+        nanumGothic: ["Nanum Gothic", "sans-serif"],
+        roboto: ["Roboto", "sans-serif"]
       }
     },
   },
