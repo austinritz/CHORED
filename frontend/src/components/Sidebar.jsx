@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const Sidebar = () => {
   const chored_logo_path = "../assets/logo/chored_logo.png";
   return (
-    <div className="h-screen sticky top-0 w-48 bg-gray-200 border-solid border-gray-300 p-4 text-black font-medium rounded-lg">
+    <aside className="h-screen fixed top-0 w-48 bg-gray-200 border-solid border-gray-300 p-4 text-black font-medium rounded-lg">
       <h2 className="text-xl font-semibold mb-6 ">
         <div className="flex size-9 items-center justify-between ">
           <img src={chored_logo_path} className="justify-start"/>
@@ -27,7 +27,7 @@ const Sidebar = () => {
           </Link>
         </li>
       </ul>
-    </div>
+    </aside>
   );
 };
 
