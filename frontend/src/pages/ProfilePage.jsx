@@ -10,6 +10,8 @@ const ProfilePage = () => {
 
   const {createChore}=useChoreStore();
 
+  const chores = useChoreStore((state) => state.chores)
+  console.log("Chores:", chores)
   function handleClick() {
     setformVisible(!formVisible);
   }
@@ -48,6 +50,17 @@ const ProfilePage = () => {
       <div className="bg-white p-8 rounded-lg shadow-lg">
         <div className="text-center">
           My Chores  
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {chores.map((chore, index) => (
+            <div
+              key={index}
+              className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition duration-200"
+            >
+              <h3 className="text-lg font-bold mb-2">{chore.name}</h3>
+              <p className="text-gray-600">{chore.description}</p>
+            </div>
+          ))}
         </div>
         <div className="flex justify-center p-8">
           <button onClick={handleClick} className="text-black bg-gray-100 shadow appearance-none rounded p-2">

@@ -15,7 +15,7 @@ export const useChoreStore = create((set) => ({
             body:JSON.stringify(newChore)
         })
         const data = await res.json();
-        set((state) => ({chores:[...state.chores, data]}))
+        set((state) => ({chores:[...state.chores, data.data]}))
         return {success:true, message:"Product created successfully"}
     }
 }))
