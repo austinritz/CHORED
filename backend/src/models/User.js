@@ -1,11 +1,19 @@
-import mongoose, { mongo, Schema } from "mongoose"
+import mongoose, { Schema } from "mongoose"
+import passportLocalMongoose from 'passport-local-mongoose';
 
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
     },
-    email: String,
+    username: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
     phoneNumber: Number,
     households: [
         {type: Schema.Types.ObjectId, ref: 'Household'}
@@ -16,6 +24,8 @@ const userSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
+userSchema.plugin(passportLocalMongoose);
 
 const User = mongoose.model('User', userSchema);
 
