@@ -35,7 +35,7 @@ app.use(passport.session());
 app.use("/api/household", householdRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/chore", choreRoutes);
-app.use("/auth", loginRoute)
+app.use("/api/auth", loginRoute)
 
 const PORT = process.env.PORT || 3000;
 

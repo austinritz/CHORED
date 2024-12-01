@@ -9,12 +9,13 @@ export const loginUser = async (req, res, next) => {
                 console.log("couldn't auth");
                 return res.status(404).json({ success: false, message: "Authentication error", error: err});
             }
+            if (result)
             return res.status(200).json({ success: true, message: "User was authenticated", result: result });
             // Value 'result' is set to false. The user could not be authenticated since the user is not active
         });
 }
 
-export const signupUser = async (req, res, next) => {
+export const registerUser = async (req, res, next) => {
     if (!req.body.password || !req.body.username) {
         return res.status(400).json({ success: false, message: "Please provide all fields"});
     }

@@ -23,7 +23,7 @@ const ProfilePage = () => {
     console.log("Message:", message)
   }
   return (
-    <main className="ml-48 p-2 justify-center items-center h-screen space-y-1">
+    <main className="ml-56 p-2 justify-center items-center h-screen space-y-1">
       <div className="bg-white p-8 rounded-lg shadow-lg">
         {/* Profile Picture */}
         <div className="flex justify-center mb-6">

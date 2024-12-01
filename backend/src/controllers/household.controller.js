@@ -24,6 +24,49 @@ export const getHousehold = async (req, res) => {
 };
 
 /*
+Returns the full list of populated user objects
+*/
+export const getHouseholdUsers = async (req, res) => {
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+        return res.status(404).json({ success: false, message: "Invalid Household Id"});
+    }
+
+    try {
+        const retrievedHousehold = await Household.findById(id)
+            .populate('users');
+        if (retrievedHousehold === null) {
+            return res.status(404).json({ success: false, message: "Household does not exist"});
+        }
+        res.status(200).json({ success: true, data: retrievedHousehold.users });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error"});
+    }
+};
+
+/*
+Returns full list of User object ids
+*/
+export const getHouseholdUserIds = async (req, res) => {
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+        return res.status(404).json({ success: false, message: "Invalid Household Id"});
+    }
+
+    try {
+        const retrievedHousehold = await Household.findById(id);
+        if (retrievedHousehold === null) {
+            return res.status(404).json({ success: false, message: "Household does not exist"});
+        }
+        res.status(200).json({ success: true, data: retrievedHousehold.users });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error"});
+    }
+};
+
+/*
 * I'm going to explore just using get* with a fully populated response
 */
 
