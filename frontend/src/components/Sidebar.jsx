@@ -1,9 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
+import { UserCircle } from "lucide-react";
 
 const Sidebar = () => {
-  const chored_logo_path = "../assets/logo/chored_logo.png";
   const location = useLocation();
-  
+
   // Helper function to check if link is active
   const isActive = (path) => {
     if (path === "") {
@@ -15,9 +15,8 @@ const Sidebar = () => {
   return (
     <aside className="h-screen fixed top-0 w-56 bg-gray-50 border-r border-gray-200 py-6 px-4">
       <div className="mb-8 pl-2">
-        <img src={chored_logo_path} className="h-8 w-auto" alt="Chored Logo"/>
+        <UserCircle className="h-8 w-8 text-gray-700" />
       </div>
-
       <nav>
         <ul className="space-y-2">
           {[

@@ -16,6 +16,17 @@ export const useChoreStore = create((set) => ({
         })
         const data = await res.json();
         set((state) => ({chores:[...state.chores, data.data]}))
-        return {success:true, message:"Product created successfully"}
+        return {success:true, message:"Chore created successfully"}
+    },
+    populateChoresForHousehold: async (householdId) => {
+        const res = await fetch("/api/household/chores/" + householdId, {
+            method:"GET",
+            headers:{
+                "Content-Type":"application/json"
+            }
+        })
+        const data = await res.json();
+        set((state) => ({chores: data.data}))
+        return {success:true, message:"Household chores populated"}
     }
 }))

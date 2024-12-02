@@ -40,18 +40,18 @@ const choreSchema = new mongoose.Schema({
             minute: { type: Number, min: 0, max: 59 }
         }
     },
-    users: [
-        {
-            type: Map,
-            of: new Schema({
-                positionInQueue: Number,
-                user: {
-                    type: Schema.Types.ObjectId,
-                    ref: 'User'
-                },
-            })
+    users: [{
+        _id: false,
+        positionInQueue: {
+            type: Number,
+            required: true
+        },
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
         }
-    ],
+    }],
     household: {
         type: Schema.Types.ObjectId,
         ref: 'Household'
@@ -60,6 +60,6 @@ const choreSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const Chore = mongoose.model('chore', choreSchema);
+const Chore = mongoose.model('Chore', choreSchema);
 
 export default Chore;

@@ -8,9 +8,10 @@ const ProfilePage = () => {
     description: "",
   });
 
-  const {createChore}=useChoreStore();
+  const {createChore, populateChoresForHousehold}=useChoreStore();
 
   const chores = useChoreStore((state) => state.chores)
+  populateChoresForHousehold("674cadba8e23f2df1ed7147d");
   console.log("Chores:", chores)
   function handleClick() {
     setformVisible(!formVisible);

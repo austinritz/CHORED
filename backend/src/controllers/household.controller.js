@@ -67,6 +67,28 @@ export const getHouseholdUserIds = async (req, res) => {
 };
 
 /*
+Returns the full list of populated chore objects
+*/
+export const getHouseholdChores = async (req, res) => {
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+        return res.status(404).json({ success: false, message: "Invalid Household Id"});
+    }
+
+    try {
+        const retrievedHousehold = await Household.findById(id)
+            .populate('chores');
+        if (retrievedHousehold === null) {
+            return res.status(404).json({ success: false, message: "Household does not exist"});
+        }
+        res.status(200).json({ success: true, data: retrievedHousehold.chores });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error", error: error});
+    }
+};
+
+/*
 * I'm going to explore just using get* with a fully populated response
 */
 

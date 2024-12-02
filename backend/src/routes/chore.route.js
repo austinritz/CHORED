@@ -4,8 +4,8 @@ import { createChore, getChore, updateChore, deleteChore, getCurrentChoreUser } 
 const router = express.Router();
 
 router.get('/:id', getChore);
+router.get('/user/:id', getCurrentChoreUser);
 router.post('/', createChore);
-router.post('/user/:id', getCurrentChoreUser);
 router.put('/:id', updateChore);
 router.delete('/:id', deleteChore);
 

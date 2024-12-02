@@ -1,11 +1,12 @@
 import express from "express";
-import { createHousehold, getHousehold, updateHousehold, deleteHousehold, getHouseholdUserIds, getHouseholdUsers } from "../controllers/household.controller.js";
+import { createHousehold, getHousehold, updateHousehold, deleteHousehold, getHouseholdUserIds, getHouseholdUsers, getHouseholdChores } from "../controllers/household.controller.js";
 
 const router = express.Router();
 
 router.get('/:id', getHousehold);
-router.get('/:id/userIds', getHouseholdUserIds);
-router.get('/:id/users', getHouseholdUsers);
+router.get('/userIds/:id', getHouseholdUserIds);
+router.get('/users/:id', getHouseholdUsers);
+router.get('/chores/:id', getHouseholdChores);
 router.post('/', createHousehold);
 router.put('/:id', updateHousehold);
 router.delete('/:id', deleteHousehold);

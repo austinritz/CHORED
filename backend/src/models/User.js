@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     phoneNumber: Number,
+    profilePhoto: {
+        type: String,
+        default: null
+      },
     households: [
         {type: Schema.Types.ObjectId, ref: 'Household'}
     ],

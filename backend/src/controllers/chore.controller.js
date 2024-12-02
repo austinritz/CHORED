@@ -27,7 +27,7 @@ const formatNewChore = (unformattedChore) => {
     // Map each user ID to an object with random queue position
     formattedChore.users = formattedChore.users.map((userId, index) => ({
         positionInQueue: positions[index],
-        user: userId
+        user: new mongoose.Types.ObjectId(userId)
     }));
   
     return formattedChore;
@@ -41,8 +41,32 @@ export const getChore = async (req, res) => {
     }
 
     try {
+        const retrievedChore = await Chore.findById(id);
+        if (retrievedChore === null) {
+            return res.status(404).json({ success: false, message: "Chore does not exist"});
+        }
+        res.status(200).json({ success: true, data: retrievedChore });
+    } catch (error) {
+        res.status(500).json({ success: false, message: "Server Error"});
+    }
+};
+
+export const getPopulatedChore = async (req, res) => {
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+        return res.status(404).json({ success: false, message: "Invalid Chore Id"});
+    }
+
+    try {
         const retrievedChore = await Chore.findById(id)
-            .populate('users')
+            .populate({
+                path: 'users',			
+                populate: { 
+                    path: 'user',
+                    model: 'User'
+                }
+            })
             .populate('household');
         if (retrievedChore === null) {
             return res.status(404).json({ success: false, message: "Chore does not exist"});
@@ -62,14 +86,20 @@ export const getCurrentChoreUser = async (req, res) => {
 
     try {
         const retrievedChore = await Chore.findById(id)
-            .populate('users');
+            .populate({
+                path: 'users',			
+                populate: { 
+                    path: 'user',
+                    model: 'User'
+                }
+            });
         if (retrievedChore === null) {
             return res.status(404).json({ success: false, message: "Chore does not exist"});
         }
         if (retrievedChore.users === null) {
             return res.status(404).json({ success: false, message: "Chore has no users"});
         }
-        const currentChoreUser = retrievedChore.users.filter(user => user.positionInQueue === retrievedChore.currentQueuePosition);
+        const currentChoreUser = retrievedChore.users.filter(user => user.positionInQueue === retrievedChore.currentQueuePosition)[0]?.user;
         res.status(200).json({ success: true, data: currentChoreUser });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server Error"});
@@ -116,7 +146,7 @@ export const createChore = async (req, res) => {
         if (chore.users?.length) {
             const updateUsers = await User.updateMany(
                 { _id: { $in: chore.users } },
-                { $push: { chores: newChore._id } },
+                { $push: { chores: new mongoose.Types.ObjectId(newChore._id) } },
                 { session }
             );
 
@@ -126,10 +156,10 @@ export const createChore = async (req, res) => {
             }
         }
 
-        if (chore.householdId) {
+        if (chore.household) {
             const updateHousehold = await Household.updateOne(
-                { _id: chore.householdId },
-                { $push: { chores: newChore._id } },
+                { _id: { $in: chore.household } },
+                { $push: { chores: new mongoose.Types.ObjectId(newChore._id) } },
                 { session }
             );
 
