@@ -171,7 +171,10 @@ export const createChore = async (req, res) => {
         // Commit the transaction
         await session.commitTransaction();
         
-        // Send response
+        // TODO: Create bullMQ job 
+        // A chore should exist in the chore database and our bullqueue
+        // These should never be out of sync
+        
         res.status(201).json({ 
             success: true, 
             data: newChore
@@ -205,6 +208,11 @@ export const updateChore = async (req, res) => {
 
     try {
         const updatedChore = await Chore.findByIdAndUpdate(id, chore,{new:true});
+
+        // TODO: if time is different, update bullMQ job
+        // We should probably do a transaction request so we can fail the
+        // MongoDB update if the bullMQ update fails
+
         res.status(200).json({ success: true, data: updatedChore });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server Error"});
@@ -256,6 +264,9 @@ export const deleteChore = async (req, res) => {
 
     try {
         await Chore.findByIdAndDelete(id);
+
+        // TODO: Delete bullMQ job
+
         res.status(200).json({ success: true, message: "Chore was deleted" });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server Error"});
@@ -269,6 +280,9 @@ export const delayChore = async (id) => {
 
     try {
         const updatedChore = await Chore.findByIdAndUpdate(id, { $set: { currentQueuePosition: 0 }, $inc: { nextOccurrence: 86400000 }});
+        
+        // TODO: update bullMQ job
+
         res.status(200).json({ success: true, data: updatedChore });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server Error"});

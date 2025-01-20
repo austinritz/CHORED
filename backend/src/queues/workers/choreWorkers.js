@@ -2,17 +2,7 @@ const { Worker } = require('bullmq');
 const connection = require('../config/redis');
 
 const choreWorker = new Worker('chores', async (job) => {
-  const { choreId, userId, type } = job.data;
-  
-  switch (type) {
-    case 'reminder':
-      await sendChoreReminder(choreId, userId);
-      break;
-    case 'due':
-      await markChoreDue(choreId);
-      break;
-    // Add other job types as needed
-  }
+    console.log('* Triggered task executed!');
 }, {
   connection,
   concurrency: 10,
@@ -20,6 +10,10 @@ const choreWorker = new Worker('chores', async (job) => {
 
 choreWorker.on('failed', (job, error) => {
   console.error(`Job ${job.id} failed:`, error);
+});
+
+choreWorker.on('completed', (job) => {
+  console.log(`Job ${job.id} completed:`);
 });
 
 module.exports = choreWorker;

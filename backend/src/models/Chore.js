@@ -13,32 +13,14 @@ const choreSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    nextOccurence: Date,
+    nextOccurence: {
+        type: Date,
+        required: true
+    },
+    isReccuring: Boolean,
     recurrence: {
-        intervalType: {
-            type: String,
-            enum: ['daily', 'weekly', 'monthly', 'yearly'],
-            default: 'weekly'
-        },
-        intervalSpacing: {
-            type: Number,
-            default: 1
-        }, // Ex. once a week, every other week, every day, every 3 days, etc
-        dayOfTheWeek: {
-            type: String,
-            enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-            default: 'Monday'
-        },
-        dayOfTheMonth: {
-            type: Number,
-            min: 1,
-            max: 31,
-        },
-        time: { 
-            type: String,
-            hour: { type: Number, min: 0, max: 23 },
-            minute: { type: Number, min: 0, max: 59 }
-        }
+        type: String,
+        required: false
     },
     users: [{
         _id: false,
