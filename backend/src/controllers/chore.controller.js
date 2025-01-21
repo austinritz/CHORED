@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import Chore from '../models/Chore.js';
 import User from '../models/User.js';
 import Household from '../models/Household.js';
+import { scheduleChoreNotification, editChoreNotification, cancelChoreNotification } from '../queues/jobs/jobHandler.js'
 
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -168,6 +169,9 @@ export const createChore = async (req, res) => {
             }
         }
 
+        const notificationResult = await scheduleChoreNotification(chore);
+        // TODO: check notification result to see if bullmq was successful
+
         // Commit the transaction
         await session.commitTransaction();
         
@@ -209,9 +213,7 @@ export const updateChore = async (req, res) => {
     try {
         const updatedChore = await Chore.findByIdAndUpdate(id, chore,{new:true});
 
-        // TODO: if time is different, update bullMQ job
-        // We should probably do a transaction request so we can fail the
-        // MongoDB update if the bullMQ update fails
+        const xxx = await editChoreNotification(chore);
 
         res.status(200).json({ success: true, data: updatedChore });
     } catch (error) {
@@ -219,7 +221,8 @@ export const updateChore = async (req, res) => {
     }
 };
 
-// Move the queue to the next person. If no more users are in the queue, then it will call the delay function (which resets the queue and puts the date to the next day)
+// Move the queue to the next person.
+// If no more users are in the queue, then it will call the delay function (which resets the queue and puts the date to the next day)
 export const incrementChoreQueuePosition = async (req, res) => {
     const { id } = req.params;
 

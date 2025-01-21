@@ -1,32 +1,34 @@
 import { Queue } from 'bullmq'
 import { connection } from '../config/redis.js'
 
+
 // Create queue
-const choreQueue = new Queue('chores', { connection });
+const reminderQueue = new Queue('reminders', { connection });
 
 // Job management functions
 // schedule
-const scheduleChore = async (chore) => {
+const scheduleReminder = async (chore) => {
   // get cron schedule
   // if one time chore, get date
   if (chore.isRecurring){
-    scheduleRecurringChore(chore);
+    scheduleRecurringReminder(chore);
   } else {
-    scheduleOneTimeChore(chore);
+    scheduleOneTimeReminder(chore);
+    
   }
   return;
 };
 
-const scheduleRecurringChore = async (chore) => {
+const scheduleRecurringReminder = async (chore) => {
  // called from scheduleChoreReminder
  // creates/gets cron schedule for the chore
  // https://docs.bullmq.io/guide/job-schedulers
  const cronPattern = chore.recurrence;
  if (!cronPattern) {
-    console.error(`chore-scheduler-${chore._id} failed to create. No recurrence pattern.`);
+    console.error(`reminder-scheduler-${chore._id} failed to create. No recurrence pattern.`);
     return;
  }
- await choreQueue.upsertJobScheduler(
+ await reminderQueue.upsertJobScheduler(
     `chore-scheduler-${chore._id}`,
     {
       pattern: cronPattern,
@@ -38,25 +40,23 @@ const scheduleRecurringChore = async (chore) => {
   );
 }
 
-const scheduleOneTimeChore = async (chore) => {
+const scheduleOneTimeReminder = async (chore) => {
  // called from scheduleChoreReminder
  // creates a one time date chore
  // https://docs.bullmq.io/guide/jobs/delayed
   const targetTime = chore.nextOccurence;
-  console.log(`TargetTime: ${targetTime}`);
   const delay = Number(targetTime) - Number(new Date());
-  console.log(`delay: ${delay}`);
-  await choreQueue.add(`chore-job-${chore._id}`, { chore: chore }, { delay: delay, jobId: chore._id });
+  await reminderQueue.add(`chore-job-${chore._id}`, { chore: chore }, { delay: delay, jobId: chore._id });
 }
 
-const cancelChore = async (choreId) => {
+const cancelReminder = async (choreId) => {
   if (chore.isRecurring) {
-    const result = await choreQueue.removeJobScheduler(`chore-scheduler-${choreId}`);
+    const result = await reminderQueue.removeJobScheduler(`chore-scheduler-${choreId}`);
     console.log(
       result ? 'Scheduler removed successfully' : 'Missing Job Scheduler',
     );
   } else {
-    const result = await choreQueue.removeJobs(`chore-reminder-${choreId}`);
+    const result = await reminderQueue.removeJobs(`chore-reminder-${choreId}`);
     console.log(
       result ? 'Job removed successfully' : 'Missing Job',
     );
@@ -64,15 +64,14 @@ const cancelChore = async (choreId) => {
   return;
 };
 
-const editChore = async (chore) => {
-  // TODO
-  // maybe just cancel and recreate?
-};
+const editReminder = async (chore) => {
+    // TODO
+}
 
 
 export {
-  choreQueue,
-  scheduleChore,
-  cancelChore,
-  editChore
+  reminderQueue,
+  scheduleReminder,
+  cancelReminder,
+  editReminder
 };

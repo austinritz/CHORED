@@ -1,4 +1,4 @@
-const { Redis } = require('ioredis');
+import { Redis } from 'ioredis';
 
 const redisConfig = {
   host: process.env.REDIS_HOST || 'localhost',
@@ -8,4 +8,4 @@ const redisConfig = {
 
 const connection = new Redis(redisConfig);
 
-module.exports = connection;
+export { connection };
