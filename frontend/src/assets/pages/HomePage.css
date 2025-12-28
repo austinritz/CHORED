@@ -1,0 +1,60 @@
+@import '../colorPalleteReference.css';
+
+.HomePage {
+  width: 100%;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* Marketing content (not logged in) */
+.HomePage-marketing {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.HomePage-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--rusty-spice);
+  margin-bottom: 3rem;
+  line-height: 1.2;
+}
+
+.HomePage-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.HomePage-features li {
+  color: var(--ink-black);
+  font-size: 1.25rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  padding-left: 2rem;
+  position: relative;
+}
+
+.HomePage-features li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--rusty-spice);
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+
+/* Household list (logged in) */
+.HomePage-households {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.HomePage-households-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
