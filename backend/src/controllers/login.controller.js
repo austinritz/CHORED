@@ -1,6 +1,4 @@
 import User from '../models/User.js';
-import UserCredential from '../models/UserCredential.js';
-import crypto from "crypto";
 
 export const loginUser = async (req, res, next) => {
         const authenticate = User.authenticate();

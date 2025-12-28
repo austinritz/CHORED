@@ -10,12 +10,13 @@ const reminderQueue = new Queue('reminders', { connection });
 const scheduleReminder = async (chore) => {
   // get cron schedule
   // if one time chore, get date
-  if (chore.isRecurring){
+  if (chore.isReccuring){
     scheduleRecurringReminder(chore);
   } else {
-    scheduleOneTimeReminder(chore);
-    
+    scheduleOneTimeReminder(chore);console.log("Chore: ", chore);
+    console.log("Chore: ", chore);
   }
+  console.log("Chore: ", chore);console.log("Chore: ", chore);console.log("Chore: ", chore);console.log("Chore: ", chore);
   return;
 };
 
@@ -50,7 +51,7 @@ const scheduleOneTimeReminder = async (chore) => {
 }
 
 const cancelReminder = async (choreId) => {
-  if (chore.isRecurring) {
+  if (chore.isReccuring) {
     const result = await reminderQueue.removeJobScheduler(`chore-scheduler-${choreId}`);
     console.log(
       result ? 'Scheduler removed successfully' : 'Missing Job Scheduler',
@@ -65,9 +66,20 @@ const cancelReminder = async (choreId) => {
 };
 
 const editReminder = async (chore) => {
-    // TODO
-}
-
+  try {
+    // First cancel the existing chore job
+    await cancelReminder(chore._id);
+    
+    // Then schedule a new job with the updated chore details
+    await scheduleReminder(chore);
+    
+    console.log(`Successfully rescheduled reminder: ${chore._id}`);
+    return true;
+  } catch (error) {
+    console.error(`Failed to edit chore ${chore._id} in queue:`, error);
+    throw error;
+  }
+};
 
 export {
   reminderQueue,

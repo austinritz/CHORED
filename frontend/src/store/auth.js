@@ -41,7 +41,8 @@ export const useAuthStore = create((set) => ({
 
             const data = await res.json();
             
-            return { isAuthenticated: true, user: data.user }
+            set({ isAuthenticated: true, user: data.user });
+            return { isAuthenticated: true, user: data.user };
         } catch (error) {
             set({ isAuthenticated: false, user: null });
             throw error;
@@ -67,7 +68,8 @@ export const useAuthStore = create((set) => ({
     register: async () => {
         try {
             const res = await fetch("/api/auth/register", {
-                method: "POST",user,
+                method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json"
                 },

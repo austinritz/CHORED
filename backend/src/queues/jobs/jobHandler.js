@@ -13,9 +13,9 @@ const editChoreNotification = async (chore) => {
     editReminder(chore);
 };
 
-const cancelChoreNotification = async (chore) => {
-    cancelChore(chore);
-    cancelReminder(chore);
+const cancelChoreNotification = async (choreId) => {
+    cancelChore(choreId);
+    cancelReminder(choreId);
 };
 
 export {

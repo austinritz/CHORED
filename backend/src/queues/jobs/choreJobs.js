@@ -9,9 +9,14 @@ const choreQueue = new Queue('chores', { connection });
 const scheduleChore = async (chore) => {
   // get cron schedule
   // if one time chore, get date
+  console.log("Chore: ", chore);
+  console.log("Chore isRecurring? ", chore.isRecurring);
+  console.log("Chore id: ", chore._id.toString());
   if (chore.isRecurring){
+    console.log("Chore is recurring");
     scheduleRecurringChore(chore);
   } else {
+    console.log("Chore is one time chore");
     scheduleOneTimeChore(chore);
   }
   return;
@@ -42,9 +47,11 @@ const scheduleOneTimeChore = async (chore) => {
  // called from scheduleChoreReminder
  // creates a one time date chore
  // https://docs.bullmq.io/guide/jobs/delayed
-  const targetTime = chore.nextOccurence;
+  const targetTime = chore.nextOccurrence;
+  const currentTime = Number(new Date());
   console.log(`TargetTime: ${targetTime}`);
   const delay = Number(targetTime) - Number(new Date());
+  console.log(`current unix time: ${currentTime}`);
   console.log(`delay: ${delay}`);
   await choreQueue.add(`chore-job-${chore._id}`, { chore: chore }, { delay: delay, jobId: chore._id });
 }
@@ -65,8 +72,19 @@ const cancelChore = async (choreId) => {
 };
 
 const editChore = async (chore) => {
-  // TODO
-  // maybe just cancel and recreate?
+  try {
+    // First cancel the existing chore job
+    await cancelChore(chore._id);
+    
+    // Then schedule a new job with the updated chore details
+    await scheduleChore(chore);
+    
+    console.log(`Successfully rescheduled chore: ${chore._id}`);
+    return true;
+  } catch (error) {
+    console.error(`Failed to edit chore ${chore._id} in queue:`, error);
+    throw error;
+  }
 };
 
 

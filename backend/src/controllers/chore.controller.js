@@ -7,6 +7,8 @@ import { scheduleChoreNotification, editChoreNotification, cancelChoreNotificati
 
 const ObjectId = mongoose.Types.ObjectId;
 
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
 // Formats an entire chore object by adding queue positions to users
 const formatNewChore = (unformattedChore) => {
     // Create a deep copy of the chore to avoid mutating the original
@@ -169,7 +171,7 @@ export const createChore = async (req, res) => {
             }
         }
 
-        const notificationResult = await scheduleChoreNotification(chore);
+        const notificationResult = await scheduleChoreNotification(newChore);
         // TODO: check notification result to see if bullmq was successful
 
         // Commit the transaction
@@ -183,6 +185,8 @@ export const createChore = async (req, res) => {
             success: true, 
             data: newChore
         });
+        console.log("Chore id from constroller: ", newChore._id);
+        console.log("another test", newChore._id.toString());
 
     } catch (error) {
         // Rollback the transaction on error
@@ -204,16 +208,18 @@ export const createChore = async (req, res) => {
 export const updateChore = async (req, res) => {
     const { id } = req.params;
 
-    const chore = req.body;
+    const choreUpdate = req.body;
 
     if (!ObjectId.isValid(id)) {
         return res.status(404).json({ success: false, message: "Invalid Chore Id"});
     }
 
     try {
-        const updatedChore = await Chore.findByIdAndUpdate(id, chore,{new:true});
-
-        const xxx = await editChoreNotification(chore);
+        const updatedChore = await Chore.findByIdAndUpdate(id, choreUpdate,{new:true});
+        if (!updatedChore) {
+            return res.status(404).json({ success: false, message: "Chore not found" });
+        }
+        const updatedChoreNotification = await editChoreNotification(choreUpdate);
 
         res.status(200).json({ success: true, data: updatedChore });
     } catch (error) {
@@ -236,6 +242,10 @@ export const incrementChoreQueuePosition = async (req, res) => {
             return delayChore(id);
         }
         const updatedChore = await Chore.findByIdAndUpdate(id, { $inc: { currentQueuePosition: 1 } });
+        if (!updatedChore) {
+            return res.status(404).json({ success: false, message: "Chore not found" });
+        }
+        const updatedChoreNotification = await editChoreNotification(updatedChore);
         res.status(200).json({ success: true, data: updatedChore });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server Error"});
@@ -252,6 +262,12 @@ export const resetChoreQueuePosition = async (req, res) => {
 
     try {
         const updatedChore = await Chore.findByIdAndUpdate(id, { $set: { currentQueuePosition: 0 } });
+
+        if (!updatedChore) {
+            return res.status(404).json({ success: false, message: "Chore not found" });
+        }
+        
+        const updatedChoreNotification = await editChoreNotification(updatedChore);
         res.status(200).json({ success: true, data: updatedChore });
     } catch (error) {
         res.status(500).json({ success: false, message: "Server Error"});
@@ -268,7 +284,7 @@ export const deleteChore = async (req, res) => {
     try {
         await Chore.findByIdAndDelete(id);
 
-        // TODO: Delete bullMQ job
+        await cancelChoreNotification(id);
 
         res.status(200).json({ success: true, message: "Chore was deleted" });
     } catch (error) {
@@ -278,16 +294,27 @@ export const deleteChore = async (req, res) => {
 
 export const delayChore = async (id) => {
     if (!ObjectId.isValid(id)) {
-        return res.status(404).json({ success: false, message: "Invalid Chore Id"});
+      return res.status(404).json({ success: false, message: "Invalid Chore Id" });
     }
-
+    
     try {
-        const updatedChore = await Chore.findByIdAndUpdate(id, { $set: { currentQueuePosition: 0 }, $inc: { nextOccurrence: 86400000 }});
-        
-        // TODO: update bullMQ job
-
-        res.status(200).json({ success: true, data: updatedChore });
+      const updatedChore = await Chore.findByIdAndUpdate(
+        id, 
+        { 
+          $set: { currentQueuePosition: 0 }, 
+          $inc: { nextOccurrence: ONE_DAY_MS }
+        },
+        { new: true }
+      );
+  
+      if (!updatedChore) {
+        return res.status(404).json({ success: false, message: "Chore not found" });
+      }
+      
+      const updatedChoreNotification = await editChoreNotification(updatedChore);
+      
+      res.status(200).json({ success: true, data: updatedChore });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Server Error"});
+      res.status(500).json({ success: false, message: "Server Error" });
     }
-};
+  };

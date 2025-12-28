@@ -1,5 +1,7 @@
 import mongoose, { mongo, Schema } from "mongoose"
 
+const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000;
+
 const choreSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -13,14 +15,21 @@ const choreSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    nextOccurence: {
+    nextOccurrence: {
         type: Date,
         required: true
     },
-    isReccuring: Boolean,
+    isRecurring: Boolean,
+    // recurrence is a Cron pattern like '* * * * * *'
     recurrence: {
         type: String,
         required: false
+    },
+    // MS between reminder and event
+    reminderBufferTime: {
+        type: Number,
+        required: false,
+        default: EIGHT_HOURS_MS,
     },
     users: [{
         _id: false,

@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     phoneNumber: Number,
+    // Stores the s3 location
     profilePhoto: {
         type: String,
         default: null
