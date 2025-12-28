@@ -1,0 +1,28 @@
+/**
+ * Color Palette Reference
+ * 
+ * Main Colors: --rusty-spice, --ink-black
+ * Style ideas: modern yet simplistic, minimalistic, clean, professional, yet warm and inviting
+ * 
+ * Import this file in your CSS to use these color variables:
+ * @import './assets/colorPalleteReference.css';
+ * 
+ * Usage: color: var(--rusty-spice);
+ */
+
+:root {
+  /* Main Colors */
+  --ink-black: #001219ff;
+  --rusty-spice: #bb3e03ff;
+  
+  /* Supporting Colors */
+  --dark-teal: #005f73ff;
+  --dark-cyan: #0a9396ff;
+  --pearl-aqua: #94d2bdff;
+  --vanilla-custard: #e9d8a6ff;
+  --golden-orange: #ee9b00ff;
+  --burnt-caramel: #ca6702ff;
+  --oxidized-iron: #ae2012ff;
+  --brown-red: #9b2226ff;
+}
+

@@ -1,0 +1,10 @@
+.ProfilePage {
+  margin-left: 250px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  gap: 0.25rem;
+}

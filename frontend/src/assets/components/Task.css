@@ -1,0 +1,13 @@
+.Task {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.Task:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
