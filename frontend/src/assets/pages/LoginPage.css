@@ -1,3 +1,5 @@
+@import '../colorPalleteReference.css';
+
 .LoginPage {
   width: 100%;
   min-height: 100vh;
@@ -5,5 +7,132 @@
   justify-content: center;
   align-items: center;
   padding: 2rem;
+  background: linear-gradient(135deg, var(--pearl-aqua) 0%, var(--vanilla-custard) 100%);
+}
+
+.LoginPage-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.LoginPage-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.LoginPage-title {
+  color: var(--ink-black);
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 2rem 0;
+  text-align: center;
+}
+
+.LoginPage-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.LoginPage-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.LoginPage-label {
+  color: var(--ink-black);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.LoginPage-input {
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: var(--ink-black);
+  transition: border-color 0.2s;
+  background: white;
+}
+
+.LoginPage-input:focus {
+  outline: none;
+  border-color: var(--rusty-spice);
+}
+
+.LoginPage-input::placeholder {
+  color: #9ca3af;
+}
+
+.LoginPage-error {
+  background-color: #fee2e2;
+  color: var(--oxidized-iron);
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid #fecaca;
+}
+
+.LoginPage-button {
+  background-color: var(--rusty-spice);
+  color: white;
+  border: none;
+  padding: 0.875rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  margin-top: 0.5rem;
+}
+
+.LoginPage-button:hover {
+  background-color: var(--burnt-caramel);
+  transform: translateY(-1px);
+}
+
+.LoginPage-button:active {
+  transform: translateY(0);
+}
+
+.LoginPage-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.LoginPage-footer-text {
+  color: var(--ink-black);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.LoginPage-link {
+  background: none;
+  border: none;
+  color: var(--rusty-spice);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.LoginPage-link:hover {
+  color: var(--burnt-caramel);
+}
+
+@media (max-width: 480px) {
+  .LoginPage-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .LoginPage-title {
+    font-size: 1.75rem;
+  }
 }
 

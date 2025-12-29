@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { useAuthStore } from './store/auth';
 import HomePage from './pages/HomePage';
 import HouseholdPage from './pages/HouseholdPage';
 import Sidebar from './components/Sidebar';
@@ -9,9 +10,11 @@ import SignupPage from './pages/SignupPage';
 import './App.css';
 
 const App = () => {
+  const { isAuthenticated } = useAuthStore();
+
   return (
     <div className="App">
-      <Sidebar/>
+      {isAuthenticated && <Sidebar/>}
       <div className="App-content">
         <Routes>
           <Route path="/" element={<HomePage />} />

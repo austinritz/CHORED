@@ -3,53 +3,180 @@
 .HomePage {
   width: 100%;
   min-height: 100vh;
-  padding: 2rem;
+  padding: 0;
+}
+
+/* Header (not logged in) */
+.HomePage-header {
+  width: 100%;
+  padding: 1.5rem 2rem;
+  background: white;
+  border-bottom: 1px solid rgba(187, 62, 3, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.HomePage-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.HomePage-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--rusty-spice);
+  letter-spacing: -0.02em;
+}
+
+.HomePage-logo-image {
+  height: 2.5rem;
+  width: auto;
+  object-fit: contain;
+}
+
+.HomePage-logo-text {
+  line-height: 1;
+}
+
+.HomePage-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.HomePage-header-link {
+  background: none;
+  border: none;
+  color: var(--ink-black);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.HomePage-header-link:hover {
+  color: var(--rusty-spice);
+  background: rgba(187, 62, 3, 0.05);
+}
+
+.HomePage-header-button {
+  background: var(--rusty-spice);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(187, 62, 3, 0.25);
+}
+
+.HomePage-header-button:hover {
+  background: var(--burnt-caramel);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(187, 62, 3, 0.35);
+}
+
+.HomePage-header-button:active {
+  transform: translateY(0);
 }
 
 /* Marketing content (not logged in) */
 .HomePage-marketing {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.HomePage-hero {
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
 .HomePage-title {
-  font-size: 3rem;
+  font-size: 3.5rem;
   font-weight: 700;
   color: var(--rusty-spice);
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
   line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.HomePage-subtitle {
+  font-size: 1.35rem;
+  color: var(--ink-black);
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+  opacity: 0.9;
+  font-weight: 400;
 }
 
 .HomePage-features {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2.5rem;
+  margin: 2rem 0;
 }
 
-.HomePage-features li {
-  color: var(--ink-black);
-  font-size: 1.25rem;
-  line-height: 1.8;
-  margin-bottom: 1.5rem;
-  padding-left: 2rem;
-  position: relative;
+.HomePage-feature {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(187, 62, 3, 0.03) 0%, rgba(187, 62, 3, 0.08) 100%);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.HomePage-features li::before {
-  content: '•';
-  position: absolute;
-  left: 0;
-  color: var(--rusty-spice);
+.HomePage-feature:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(187, 62, 3, 0.15);
+}
+
+.HomePage-feature-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.HomePage-feature-content {
+  flex: 1;
+}
+
+.HomePage-feature-title {
   font-size: 1.5rem;
-  line-height: 1.4;
+  font-weight: 600;
+  color: var(--rusty-spice);
+  margin-bottom: 0.75rem;
+}
+
+.HomePage-feature-description {
+  font-size: 1rem;
+  color: var(--ink-black);
+  line-height: 1.6;
+  opacity: 0.85;
 }
 
 /* Household list (logged in) */
 .HomePage-households {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 0;
+  padding: 2rem;
 }
 
 .HomePage-households-list {
@@ -58,3 +185,49 @@
   gap: 1.5rem;
 }
 
+/* Responsive design */
+@media (max-width: 768px) {
+  .HomePage-header {
+    padding: 1rem 1.5rem;
+  }
+  
+  .HomePage-logo {
+    font-size: 1.25rem;
+  }
+  
+  .HomePage-logo-image {
+    height: 2rem;
+  }
+  
+  .HomePage-header-actions {
+    gap: 0.5rem;
+  }
+  
+  .HomePage-header-link {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .HomePage-header-button {
+    font-size: 0.9rem;
+    padding: 0.625rem 1.25rem;
+  }
+  
+  .HomePage-title {
+    font-size: 2.5rem;
+  }
+  
+  .HomePage-subtitle {
+    font-size: 1.15rem;
+  }
+  
+  .HomePage-features {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .HomePage-marketing {
+    padding: 2rem 1rem;
+    gap: 3rem;
+  }
+}

@@ -65,7 +65,10 @@ export const useAuthStore = create((set) => ({
             console.error("Logout failed:", error);
         }
     },
-    register: async () => {
+    register: async (userData) => {
+        if (!userData.name || !userData.username || !userData.email || !userData.password) {
+            return { success: false, message: "Please fill in all required fields" };
+        }
         try {
             const res = await fetch("/api/auth/register", {
                 method: "POST",
@@ -76,10 +79,13 @@ export const useAuthStore = create((set) => ({
                 body: JSON.stringify(userData)
             });
 
-            if (!res.ok) throw new Error("Registration failed");
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                throw new Error(errorData.message || "Registration failed");
+            }
 
             const data = await res.json();
-            set({ isAuthenticated: true, user: data.user });
+            return { success: true, user: data.user };
         } catch (error) {
             throw error; // Allows UI to handle the error if needed
         }
