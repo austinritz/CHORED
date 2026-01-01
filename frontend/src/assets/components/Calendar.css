@@ -1,6 +1,53 @@
+@import '../colorPalleteReference.css';
+
 .Calendar {
   width: 100%;
-  height: 100%;
   padding: 1rem;
+  background-color: #fff;
+  border-radius: 12px;
+}
+
+.Calendar-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid rgba(187, 62, 3, 0.1);
+  padding-bottom: 0.75rem;
+}
+
+.Calendar-day-header {
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.Calendar-day-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--rusty-spice);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.Calendar-day-number {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--ink-black);
+}
+
+.Calendar-body {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  min-height: 400px;
+}
+
+.Calendar-day-column {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.25rem;
 }
 

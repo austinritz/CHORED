@@ -1,32 +1,40 @@
 import {create} from "zustand"
+import {persist} from "zustand/middleware"
 
-export const useChoreStore = create((set) => ({
-    chores: [],
-    setChores: (chores) => set({chores}),
-    createChore: async (newChore) => {
-        if(!newChore.name || !newChore.description) {
-            return {success:false, message:"Please fill in all fields"}
-        }
-        const res = await fetch("/api/chore", {
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
+export const useChoreStore = create(
+    persist(
+        (set) => ({
+            chores: [],
+            setChores: (chores) => set({chores}),
+            createChore: async (newChore) => {
+                if(!newChore.name || !newChore.description) {
+                    return {success:false, message:"Please fill in all fields"}
+                }
+                const res = await fetch("/api/chore", {
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify(newChore)
+                })
+                const data = await res.json();
+                set((state) => ({chores:[...state.chores, data.data]}))
+                return {success:true, message:"Chore created successfully"}
             },
-            body:JSON.stringify(newChore)
-        })
-        const data = await res.json();
-        set((state) => ({chores:[...state.chores, data.data]}))
-        return {success:true, message:"Chore created successfully"}
-    },
-    populateChoresForHousehold: async (householdId) => {
-        const res = await fetch("/api/household/chores/" + householdId, {
-            method:"GET",
-            headers:{
-                "Content-Type":"application/json"
+            populateChoresForHousehold: async (householdId) => {
+                const res = await fetch("/api/household/chores/" + householdId, {
+                    method:"GET",
+                    headers:{
+                        "Content-Type":"application/json"
+                    }
+                })
+                const data = await res.json();
+                set((state) => ({chores: data.data}))
+                return {success:true, message:"Household chores populated"}
             }
-        })
-        const data = await res.json();
-        set((state) => ({chores: data.data}))
-        return {success:true, message:"Household chores populated"}
-    }
-}))
+        }),
+        {
+            name: "chore-storage", // localStorage key
+        }
+    )
+)

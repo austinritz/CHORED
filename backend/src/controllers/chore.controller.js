@@ -214,16 +214,135 @@ export const updateChore = async (req, res) => {
         return res.status(404).json({ success: false, message: "Invalid Chore Id"});
     }
 
+    // Use a session for transaction
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
-        const updatedChore = await Chore.findByIdAndUpdate(id, choreUpdate,{new:true});
-        if (!updatedChore) {
+        // Fetch the existing chore to compare users and household
+        const existingChore = await Chore.findById(id).session(session);
+        if (existingChore === null) {
+            await session.abortTransaction();
+            session.endSession();
             return res.status(404).json({ success: false, message: "Chore not found" });
         }
-        const updatedChoreNotification = await editChoreNotification(choreUpdate);
+
+        // Extract old user IDs from nested structure
+        const oldUserIds = existingChore.users?.map(userObj => userObj.user.toString()) || [];
+        const oldHouseholdId = existingChore.household?.toString() || null;
+
+        // Format the chore update if users are provided (might be raw IDs)
+        let formattedChoreUpdate = { ...choreUpdate };
+        const usersProvided = choreUpdate.hasOwnProperty('users');
+        const householdProvided = choreUpdate.hasOwnProperty('household');
+        
+        if (usersProvided && Array.isArray(choreUpdate.users) && choreUpdate.users.length > 0) {
+            // Check if users are already formatted (have user property) or raw IDs
+            const isFormatted = choreUpdate.users[0]?.user || typeof choreUpdate.users[0] === 'object';
+            if (!isFormatted) {
+                // Format users if they're raw IDs
+                formattedChoreUpdate = formatNewChore(choreUpdate);
+            }
+        }
+
+        // Extract new user IDs (handle both formats) - only if users were provided
+        let newUserIds = [];
+        if (usersProvided && formattedChoreUpdate.users && Array.isArray(formattedChoreUpdate.users)) {
+            newUserIds = formattedChoreUpdate.users.map(userObj => {
+                // Handle both nested structure and raw IDs
+                if (typeof userObj === 'string') {
+                    return userObj;
+                }
+                return userObj.user?.toString() || userObj.toString();
+            });
+        }
+        const newHouseholdId = householdProvided ? (formattedChoreUpdate.household?.toString() || null) : oldHouseholdId;
+
+        // Find users to remove (in old but not in new) - only if users were provided
+        const usersToRemove = usersProvided ? oldUserIds.filter(userId => !newUserIds.includes(userId)) : [];
+        // Find users to add (in new but not in old) - only if users were provided
+        const usersToAdd = usersProvided ? newUserIds.filter(userId => !oldUserIds.includes(userId)) : [];
+
+        // Update the chore
+        const updatedChore = await Chore.findByIdAndUpdate(
+            id,
+            formattedChoreUpdate,
+            { new: true, session }
+        );
+
+        // Remove chore from users who are no longer in the chore
+        if (usersToRemove.length > 0) {
+            const removeResult = await User.updateMany(
+                { _id: { $in: usersToRemove } },
+                { $pull: { chores: new mongoose.Types.ObjectId(id) } },
+                { session }
+            );
+
+            // Verify that all users were updated
+            if (removeResult.modifiedCount !== usersToRemove.length) {
+                throw new Error('Some users could not be removed from chore');
+            }
+        }
+
+        // Add chore to users who are newly added
+        if (usersToAdd.length > 0) {
+            const addResult = await User.updateMany(
+                { _id: { $in: usersToAdd } },
+                { $push: { chores: new mongoose.Types.ObjectId(id) } },
+                { session }
+            );
+
+            // Verify that all users were updated
+            if (addResult.modifiedCount !== usersToAdd.length) {
+                throw new Error('Some users could not be added to chore');
+            }
+        }
+
+        // Handle household changes - only if household was provided
+        if (householdProvided && oldHouseholdId !== newHouseholdId) {
+            // Remove chore from old household
+            if (oldHouseholdId) {
+                const removeHouseholdResult = await Household.updateOne(
+                    { _id: oldHouseholdId },
+                    { $pull: { chores: new mongoose.Types.ObjectId(id) } },
+                    { session }
+                );
+
+                if (!removeHouseholdResult.modifiedCount) {
+                    throw new Error('Old household could not be updated');
+                }
+            }
+
+            // Add chore to new household
+            if (newHouseholdId) {
+                const addHouseholdResult = await Household.updateOne(
+                    { _id: newHouseholdId },
+                    { $push: { chores: new mongoose.Types.ObjectId(id) } },
+                    { session }
+                );
+
+                if (!addHouseholdResult.modifiedCount) {
+                    throw new Error('New household could not be updated');
+                }
+            }
+        }
+
+        // Commit the transaction
+        await session.commitTransaction();
+
+        // Update notification (outside transaction as it's external)
+        const updatedChoreNotification = await editChoreNotification(updatedChore);
 
         res.status(200).json({ success: true, data: updatedChore });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Server Error"});
+        // Rollback the transaction on error
+        await session.abortTransaction();
+        
+        console.error('Error in Update Chore', error.message);
+        res.status(500).json({ success: false, message: "Server Error", error: error.message});
+    } finally {
+        // End the session
+        session.endSession();
     }
 };
 
@@ -281,14 +400,69 @@ export const deleteChore = async (req, res) => {
         return res.status(404).json({ success: false, message: "Invalid Chore Id"});
     }
 
-    try {
-        await Chore.findByIdAndDelete(id);
+    // Use a session for transaction
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
+    try {
+        // Fetch the chore first to get related users and household
+        const choreToDelete = await Chore.findById(id).session(session);
+        if (choreToDelete === null) {
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(404).json({ success: false, message: "Chore does not exist"});
+        }
+
+        // Extract user IDs from the nested structure
+        const userIds = choreToDelete.users?.map(userObj => userObj.user.toString()) || [];
+        const householdId = choreToDelete.household?.toString();
+
+        // Remove chore from User.chores arrays
+        if (userIds.length > 0) {
+            const updateUsers = await User.updateMany(
+                { _id: { $in: userIds } },
+                { $pull: { chores: new mongoose.Types.ObjectId(id) } },
+                { session }
+            );
+
+            // Verify that all users were updated
+            if (updateUsers.modifiedCount !== userIds.length) {
+                throw new Error('Some users could not be updated');
+            }
+        }
+
+        // Remove chore from Household.chores array
+        if (householdId) {
+            const updateHousehold = await Household.updateOne(
+                { _id: householdId },
+                { $pull: { chores: new mongoose.Types.ObjectId(id) } },
+                { session }
+            );
+
+            if (!updateHousehold.modifiedCount) {
+                throw new Error('Household could not be updated');
+            }
+        }
+
+        // Delete the chore
+        await Chore.findByIdAndDelete(id).session(session);
+
+        // Cancel notification (outside transaction as it's external)
         await cancelChoreNotification(id);
+
+        // Commit the transaction
+        await session.commitTransaction();
 
         res.status(200).json({ success: true, message: "Chore was deleted" });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Server Error"});
+        // Rollback the transaction on error
+        await session.abortTransaction();
+        
+        console.error('Error in Delete Chore', error.message);
+        res.status(500).json({ success: false, message: "Server Error", error: error.message});
+    } finally {
+        // End the session
+        session.endSession();
     }
 }; 
 

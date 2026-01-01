@@ -179,10 +179,61 @@
   padding: 2rem;
 }
 
+.HomePage-households-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.HomePage-households-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--rusty-spice);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.HomePage-households-create-button {
+  background: var(--rusty-spice);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(187, 62, 3, 0.25);
+}
+
+.HomePage-households-create-button:hover {
+  background: var(--burnt-caramel);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(187, 62, 3, 0.35);
+}
+
+.HomePage-households-create-button:active {
+  transform: translateY(0);
+}
+
 .HomePage-households-list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.HomePage-households-empty {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--ink-black);
+  font-size: 1.1rem;
+  opacity: 0.7;
+  background: linear-gradient(135deg, rgba(187, 62, 3, 0.03) 0%, rgba(187, 62, 3, 0.08) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(187, 62, 3, 0.1);
 }
 
 /* Responsive design */
@@ -229,5 +280,22 @@
   .HomePage-marketing {
     padding: 2rem 1rem;
     gap: 3rem;
+  }
+
+  .HomePage-households {
+    padding: 1.5rem 1rem;
+  }
+
+  .HomePage-households-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .HomePage-households-title {
+    font-size: 2rem;
+  }
+
+  .HomePage-households-create-button {
+    width: 100%;
   }
 }

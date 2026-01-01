@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useAuthStore } from './store/auth';
 import HomePage from './pages/HomePage';
 import HouseholdPage from './pages/HouseholdPage';
@@ -10,7 +11,15 @@ import SignupPage from './pages/SignupPage';
 import './App.css';
 
 const App = () => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, checkAuthStatus } = useAuthStore();
+
+  useEffect(() => {
+    // Check authentication status on app load
+    checkAuthStatus().catch((error) => {
+      // Silently handle auth check errors - user is simply not authenticated
+      console.error("Auth check failed:", error);
+    });
+  }, [checkAuthStatus]);
 
   return (
     <div className="App">

@@ -9,9 +9,6 @@ const choreQueue = new Queue('chores', { connection });
 const scheduleChore = async (chore) => {
   // get cron schedule
   // if one time chore, get date
-  console.log("Chore: ", chore);
-  console.log("Chore isRecurring? ", chore.isRecurring);
-  console.log("Chore id: ", chore._id.toString());
   if (chore.isRecurring){
     console.log("Chore is recurring");
     scheduleRecurringChore(chore);

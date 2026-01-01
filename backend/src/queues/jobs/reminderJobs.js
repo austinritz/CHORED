@@ -8,15 +8,18 @@ const reminderQueue = new Queue('reminders', { connection });
 // Job management functions
 // schedule
 const scheduleReminder = async (chore) => {
+  console.log("Choreddd: ", chore);
+  console.log("Chore isRecurring: ", chore.isRecurring);
   // get cron schedule
   // if one time chore, get date
-  if (chore.isReccuring){
+  console.log("chore.isRecurring type and value: ", typeof chore.isRecurring, chore.isRecurring);
+  if (chore.isRecurring){
+    console.log("Scheduling recurring reminder");
     scheduleRecurringReminder(chore);
   } else {
-    scheduleOneTimeReminder(chore);console.log("Chore: ", chore);
-    console.log("Chore: ", chore);
+    console.log("Scheduling one time reminder");
+    scheduleOneTimeReminder(chore);
   }
-  console.log("Chore: ", chore);console.log("Chore: ", chore);console.log("Chore: ", chore);console.log("Chore: ", chore);
   return;
 };
 
@@ -51,7 +54,7 @@ const scheduleOneTimeReminder = async (chore) => {
 }
 
 const cancelReminder = async (choreId) => {
-  if (chore.isReccuring) {
+  if (chore.isRecurring) {
     const result = await reminderQueue.removeJobScheduler(`chore-scheduler-${choreId}`);
     console.log(
       result ? 'Scheduler removed successfully' : 'Missing Job Scheduler',

@@ -20,10 +20,10 @@ app.use(
         saveUninitialized: false,
         resave: false,
         cookie: {
-            maxAge: 60000 * 60,
-            secure: true,
+            maxAge: 60000 * 60, // 1 hour
+            secure: process.env.NODE_ENV === 'production', // Only use secure cookies in production (HTTPS)
             httpOnly: true,
-            sameSite: "strict"
+            sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax' // 'lax' works better for localhost
         },
     })
 );

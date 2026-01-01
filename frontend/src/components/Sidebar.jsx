@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { FaHome, FaUserCircle } from "react-icons/fa";
 import "../assets/components/Sidebar.css";
 
 /* Sidebar component 
@@ -18,6 +19,22 @@ const Sidebar = () => {
 
   return (
     <aside className="sidebar">
+      <nav className="sidebar-nav">
+        <Link 
+          to="/" 
+          className={`sidebar-link ${isActive("") ? "active" : ""}`}
+          title="Home"
+        >
+          <FaHome className="sidebar-icon" />
+        </Link>
+        <Link 
+          to="/profile" 
+          className={`sidebar-link ${isActive("/profile") ? "active" : ""}`}
+          title="Profile"
+        >
+          <FaUserCircle className="sidebar-icon" />
+        </Link>
+      </nav>
     </aside>
   );
 };

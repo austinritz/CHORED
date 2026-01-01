@@ -38,7 +38,7 @@ const LoginPage = () => {
     const { isAuthenticated, user } = await login(credentials);
     if (isAuthenticated && user) {
       console.log("user logged in ")
-      navigate('/profile')
+      navigate('/')
     } else {
       console.log("User auth failed")
       setAuthFailed(true);

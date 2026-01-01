@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../store/auth';
 import { useHouseholdStore } from '../store/household';
 import { useNavigate } from 'react-router-dom';
 import Household from '../components/Household';
+import CreateHouseholdModal from '../modals/CreateHouseholdModal';
 import logoImage from '../assets/logo/chored_logo_no_background.png';
 import '../assets/pages/HomePage.css';
 
@@ -15,6 +16,7 @@ const HomePage = () => {
   const { isAuthenticated, user } = useAuthStore();
   const { households, fetchUserHouseholds } = useHouseholdStore();
   const navigate = useNavigate();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated && user && user._id) {
@@ -22,6 +24,8 @@ const HomePage = () => {
     }
   }, [isAuthenticated, user, fetchUserHouseholds]);
 
+  console.log(households);
+ 
   return (
     <main className="HomePage">
       {!isAuthenticated ? (
@@ -94,15 +98,28 @@ const HomePage = () => {
         </>
       ) : (
         <div className="HomePage-households">
+          <div className="HomePage-households-header">
+            <h1 className="HomePage-households-title">My Households</h1>
+            <button
+              className="HomePage-households-create-button"
+              onClick={() => setIsCreateModalOpen(true)}
+            >
+              Create New Household
+            </button>
+          </div>
           <div className="HomePage-households-list">
             {households.length > 0 ? (
               households.map((household) => (
                 <Household key={household._id} household={household} />
               ))
             ) : (
-              <p>No households found. Create one to get started!</p>
+              <p className="HomePage-households-empty">No households found. Create one to get started!</p>
             )}
           </div>
+          <CreateHouseholdModal
+            isOpen={isCreateModalOpen}
+            onClose={() => setIsCreateModalOpen(false)}
+          />
         </div>
       )}
     </main>
